@@ -52,7 +52,7 @@ def main():
     sock = socket.socket(socket.AF_INET, # Internet
                          socket.SOCK_DGRAM) # UDP
     sock.bind((UDP_IP, UDP_PORT))
-
+    sock.settimeout(0.3)
     
     ledDataWandOn = bytearray()
     ledDataLampenOn = bytearray()
@@ -76,22 +76,25 @@ def main():
       # get GPIO value
       if GPIO.input(GPIOSwitchAmbianceMode) and ambianceMode <> 1:
         ambianceMode = 1
-     #   print("Button 2  pressed")
+	time.sleep(0.2)
+        print("Button 2  pressed")
 
       if not GPIO.input(GPIOSwitchAmbianceMode) and ambianceMode <> 0:
         ambianceMode = 0
         ambianceLightStatus = 0
-    #    print("Button 2 released")
+	time.sleep(0.2)
+        print("Button 2 released")
 
 		
       if GPIO.input(GPIOFrontLight) and frontLightStatus <> 1:
         frontLightStatus = 1
-
-   #     print("Button 1  pressed")
+	time.sleep(0.2)
+        print("Button 1  pressed")
 
       if not GPIO.input(GPIOFrontLight) and frontLightStatus <> 0:
         frontLightStatus = 0
-  #      print("Button 1 released")
+	time.sleep(0.2)
+        print("Button 1 released")
     
     
       if GPIO.input(GPIODimmer):
@@ -148,20 +151,21 @@ def main():
         print("Dimmdone")
 
       ledData = bytearray()
-      
+
+      sleepTime = 0.1
+
       if ambianceMode == 1:
-        srgb = bytearray(4096)
-        number,addr = sock.recvfrom_into(srgb) # buffer size is 
-     
-        ledDataServer = bytearray()
-        for i in range(1, number-3, 3):
-          ledDataServer += bytearray((srgb[i+1], srgb[i],srgb[i+2]))
-      
-        ledData = ledData ledDataServer
-  
- #     for i in range(number/3+1,152):
-#        ledDataWandOff += bytearray((0,0,0))
-#      print len(ledDataWandOff)
+        srgb = bytearray(152*3)
+        
+        try:
+          number,addr = sock.recvfrom_into(srgb) # buffer size is 
+          ledDataServer = bytearray()
+          for i in range(1, number-3, 3): 
+            ledDataServer += bytearray((srgb[i+2], srgb[i], srgb[i+1]))
+          ledData = ledData + ledDataServer        
+          sleepTime = 0.01
+        except socket.timeout:
+          ledData = ledData + ledDataWandOff    
 
       else:
 
@@ -174,15 +178,11 @@ def main():
 	ledData = ledData + ledDataLampenOn
       else:
         ledData = ledData + ledDataLampenOff   
-
-     
-      #data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-       
+           
       hyperion.setColor(ledData)
 	  
       # wait 100ms
-      time.sleep(0.01)
-
+      time.sleep(sleepTime)
 	  
 	
 	  

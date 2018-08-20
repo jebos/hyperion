@@ -246,6 +246,7 @@ LedDevice * LedDeviceFactory::construct(const Json::Value & deviceConfig)
 	}
 	else if (type == "udp")
 	{
+                std::cout << "UDP LETS  CREATE IT"<<std::endl;
 		const std::string output = deviceConfig["output"].asString();
 		const unsigned rate      = deviceConfig["rate"].asInt();
 		const unsigned protocol  = deviceConfig["protocol"].asInt();
@@ -279,7 +280,7 @@ LedDevice * LedDeviceFactory::construct(const Json::Value & deviceConfig)
 #endif
 	else
 	{
-		std::cout << "Unable to create device " << type << std::endl;
+		std::cout << "Unable to create device undown.. " << type << std::endl;
 		// Unknown / Unimplemented device
 	}
 	return device;

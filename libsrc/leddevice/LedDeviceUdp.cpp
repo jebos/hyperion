@@ -34,7 +34,7 @@ LedDeviceUdp::LedDeviceUdp(const std::string& output, const unsigned baudrate, c
 	    leds_per_pkt = 200;
     }
 
-//printf ("leds_per_pkt is %d\n", leds_per_pkt);
+    //printf ("leds_per_pkt is %d\n", leds_per_pkt);
     int got_colon=0;
     for (unsigned int i=0; i<output.length(); i++) {
 	if (output[i] == ':') {
@@ -45,7 +45,7 @@ LedDeviceUdp::LedDeviceUdp(const std::string& output, const unsigned baudrate, c
 		port+=output[i];
 	}
     }
-//std::cout << "output " << output << " hostname " << hostname << " port " << port <<std::endl;
+    std::cout << "output " << output << " hostname " << hostname << " port " << port <<std::endl;
     assert(got_colon==1);
 
     int rv;
@@ -74,6 +74,8 @@ LedDeviceUdp::LedDeviceUdp(const std::string& output, const unsigned baudrate, c
         fprintf(stderr, "talker: failed to create socket\n");
         assert(p!=NULL);
     }
+
+
 }
 
 LedDeviceUdp::~LedDeviceUdp()
@@ -99,7 +101,7 @@ int LedDeviceUdp::write(const std::vector<ColorRgb> & ledValues)
 				udpbuffer[i++] = color.green;
 				udpbuffer[i++] = color.blue;
 			}
-	//printf ("c.red %d sz c.red %d\n", color.red, sizeof(color.red));
+  	                //printf ("c.red %d sz c.red %d\n", color.red, sizeof(color.red));
 		}
 		sendto(sockfd, udpbuffer, i, 0, p->ai_addr, p->ai_addrlen);
 	}
